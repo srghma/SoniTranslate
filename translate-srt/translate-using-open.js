@@ -15,8 +15,8 @@ import glob from "glob";
 import srtParser2 from "srt-parser-2";
 import languageEncoding from "detect-file-encoding-and-language";
 import translator from "open-google-translator";
-import Keyv from "keyv";
-import KeyvSqlite from "@keyv/sqlite";
+import * as sqlite3 from "sqlite3";
+import { open } from "sqlite";
 
 async function checkFileExists(file) {
   try {
@@ -34,29 +34,36 @@ const parser = new srtParser2();
 const args = process.argv.slice(process.argv[0].endsWith("node") ? 2 : 1);
 
 let srts = await Promise.all(
-  args.map(async (arg) => {
-    if (arg.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm)$/i)) {
-      const enSrtFile = arg.replace(/\.[^.]+$/, ".en.srt");
-      const srtFile = arg.replace(/\.[^.]+$/, ".srt");
+  args.map(async (filePath) => {
+    if (filePath.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm)$/i)) {
+      const enSrtFile = filePath.replace(/\.[^.]+$/, ".en.srt");
       if (await checkFileExists(enSrtFile)) {
         console.log(`found srt file at ${enSrtFile}`);
         return enSrtFile;
-      } else if (await checkFileExists(srtFile)) {
+      }
+
+      const srtFile = filePath.replace(/\.[^.]+$/, ".srt");
+      if (await checkFileExists(srtFile)) {
         console.log(`found srt file at ${srtFile}`);
         return srtFile;
-      } else {
-        console.log(`trying ffmpeg -i "${arg}" -map "0:s:0" "${srtFile}"`);
-        await new Promise((resolve, reject) => {
-          exec(`ffmpeg -i "${arg}" -map "0:s:0" "${srtFile}"`, (error) => {
-            if (error) reject(error);
-            else resolve();
-          });
-        });
-        return srtFile;
       }
-    } else if (arg.endsWith(".srt")) {
-      return arg;
+
+      console.log(`Trying ffmpeg -i "${filePath}" -map "0:s:0" "${srtFile}"`);
+
+      await new Promise((resolve, reject) => {
+        exec(`ffmpeg -i "${filePath}" -map "0:s:0" "${srtFile}"`, (error) => {
+          if (error) reject(error);
+          else resolve();
+        });
+      });
+      return srtFile;
     }
+
+    if (filePath.endsWith(".srt")) {
+      return filePath;
+    }
+
+    throw new Error(`Cannot parse ${filePath}`);
   }),
 ).then((files) => files.filter(Boolean));
 
@@ -125,26 +132,36 @@ srts = srts.map((x) => {
 });
 
 async function translateSrt({ strDataArray, fromLanguage, toLanguage }) {
-  // const { srt, strDataArray, outputPathInDownloads, outputPath } = srts[0];
-  // const listOfWordsToTranslate = strDataArray;
-  // const fromLanguage = "en";
-  // const toLanguage = "km";
+  const dbPath = `${process.env.XDG_CACHE_HOME || `${process.env.HOME}/.cache`}/my-translate-srt-files-cache.sqlite`;
 
-  const store = new Keyv({
-    store: new KeyvSqlite({
-      uri: `sqlite://${process.env.XDG_CACHE_HOME || `${process.env.HOME}/.cache`}/my-translate-srt-files-cache.sqlite`,
-    }),
-    namespace: `${fromLanguage}-${toLanguage}`,
+  const db = await open({
+    filename: dbPath,
+    driver: sqlite3.Database,
   });
+
+  await db.exec(`CREATE TABLE IF NOT EXISTS translations (
+    language_pair TEXT NOT NULL,
+    original TEXT NOT NULL,
+    translation TEXT NOT NULL,
+    PRIMARY KEY (language_pair, original)
+  )`);
+
+  const languagePair = `${fromLanguage}-${toLanguage}`;
 
   const maybeTranslations = await Promise.all(
     strDataArray
       .map(({ text }) => text.trim())
       .filter((x) => x)
-      .map(async (original) => ({
-        original,
-        translation: await store.get(original),
-      })),
+      .map(async (original) => {
+        const row = await db.get(
+          "SELECT translation FROM translations WHERE language_pair = ? AND original = ?",
+          [languagePair, original],
+        );
+        return {
+          original,
+          translation: row?.translation,
+        };
+      }),
   );
 
   const listOfWordsToTranslate = maybeTranslations
@@ -177,7 +194,10 @@ async function translateSrt({ strDataArray, fromLanguage, toLanguage }) {
   }
 
   for (const { original, translation } of translations) {
-    await store.set(original, translation);
+    await db.run(
+      "INSERT OR REPLACE INTO translations (language_pair, original, translation) VALUES (?, ?, ?)",
+      [languagePair, original, translation],
+    );
   }
 
   const output = await Promise.all(
@@ -186,8 +206,12 @@ async function translateSrt({ strDataArray, fromLanguage, toLanguage }) {
       if (!text.trim()) {
         return { ...strData, translation: text };
       }
-      const translation = await store.get(text);
-      const valid = !!translation.trim();
+      const row = await db.get(
+        "SELECT translation FROM translations WHERE language_pair = ? AND original = ?",
+        [languagePair, text.trim()],
+      );
+      const translation = row?.translation;
+      const valid = translation && !!translation.trim();
       if (!valid) {
         throw new Error(`no translation for ${text}: ${translation}`);
       }
@@ -196,6 +220,7 @@ async function translateSrt({ strDataArray, fromLanguage, toLanguage }) {
   );
   // console.log(output)
 
+  await db.close();
   return output;
 }
 
