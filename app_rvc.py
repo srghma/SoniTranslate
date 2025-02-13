@@ -389,18 +389,18 @@ class SoniTranslate(SoniTrCache):
         target_language="English (en)",
         min_speakers=1,
         max_speakers=1,
-        tts_voice00="en-US-EmmaMultilingualNeural-Female",
-        tts_voice01="en-US-AndrewMultilingualNeural-Male",
-        tts_voice02="en-US-AvaMultilingualNeural-Female",
-        tts_voice03="en-US-BrianMultilingualNeural-Male",
-        tts_voice04="de-DE-SeraphinaMultilingualNeural-Female",
-        tts_voice05="de-DE-FlorianMultilingualNeural-Male",
-        tts_voice06="fr-FR-VivienneMultilingualNeural-Female",
-        tts_voice07="fr-FR-RemyMultilingualNeural-Male",
-        tts_voice08="en-US-EmmaMultilingualNeural-Female",
-        tts_voice09="en-US-AndrewMultilingualNeural-Male",
-        tts_voice10="en-US-EmmaMultilingualNeural-Female",
-        tts_voice11="en-US-AndrewMultilingualNeural-Male",
+        tts_voice00_female="en-US-EmmaMultilingualNeural-Female",
+        tts_voice00_male="en-US-AndrewMultilingualNeural-Male",
+        tts_voice01_female="en-US-AvaMultilingualNeural-Female",
+        tts_voice01_male="en-US-BrianMultilingualNeural-Male",
+        tts_voice02_female="de-DE-SeraphinaMultilingualNeural-Female",
+        tts_voice02_male="de-DE-FlorianMultilingualNeural-Male",
+        tts_voice03_female="fr-FR-VivienneMultilingualNeural-Female",
+        tts_voice03_male="fr-FR-RemyMultilingualNeural-Male",
+        tts_voice04_female="en-US-EmmaMultilingualNeural-Female",
+        tts_voice04_male="en-US-AndrewMultilingualNeural-Male",
+        tts_voice05_female="en-US-EmmaMultilingualNeural-Female",
+        tts_voice05_male="en-US-AndrewMultilingualNeural-Male",
         video_output_name="",
         mix_method_audio="Adjusting volumes and mixing audio",
         max_accelerate_audio=2.1,
@@ -835,6 +835,7 @@ class SoniTranslate(SoniTrCache):
                 raise ValueError("Generate the transcription first.")
             # with open('text_json.json', 'r') as file:
             text_json_loaded = json.loads(text_json)
+            print(self.result_diarize["segments"])
             for i, segment in enumerate(self.result_diarize["segments"]):
                 segment["text"] = text_json_loaded[i]["text"]
                 segment["speaker"] = "SPEAKER_{:02d}".format(
@@ -2861,4 +2862,5 @@ if __name__ == "__main__":
         show_error=True,
         quiet=False,
         debug=(True if logger.isEnabledFor(logging.DEBUG) else False),
+        server_name="0.0.0.0",
     )
