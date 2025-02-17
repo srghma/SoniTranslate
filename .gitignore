@@ -212,3 +212,19 @@ WHISPER_MODELS/
 whisper_api_audio_parts/
 uroman/
 pdf_images/
+node_modules/
+*.srt.txt
+*.srt
+translate-srt/.puppeteer_userdata
+output*
+*.sqlite
+.puppeteer_userdata/
+.env
+.root-*/
+model/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

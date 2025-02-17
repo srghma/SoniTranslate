@@ -1,0 +1,24 @@
+# docker cp sonitranslate:/root/.EasyOCR/ ./.EasyOCR/
+# docker cp sonitranslate:/root/.cache/huggingface/ ./.root-cache-huggingface/
+# docker cp sonitranslate:/root/.cache/torch/ ./.root-cache-torch/
+# docker cp sonitranslate:/root/.cache/matplotlib/ ./.root-cache-matplotlib/
+
+services:
+  sonitranslate:
+    image: soni_translate_image
+    command: python /app/app_cli.py
+    env_file:
+      - .env
+    ports:
+      - "7860:7860"
+    volumes:
+      - .:/app
+      - ./.EasyOCR/:/root/.EasyOCR/
+      - ./.root-local-share-tts:/root/.local/share/tts
+      - ./.root-cache-huggingface/:/root/.cache/huggingface/
+      - ./.root-cache-torch/:/root/.cache/torch/
+      - ./.root-cache-matplotlib/:/root/.cache/matplotlib/
+      - /home/srghma/Downloads/:/home/srghma/Downloads/
+    stdin_open: true
+    tty: true
+    restart: "no" # Equivalent to --rm, removes container after stopping
