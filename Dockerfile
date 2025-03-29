@@ -81,4 +81,13 @@ SHELL ["/bin/bash", "-c"]
 RUN conda create -n myenv python=3.9 -y
 RUN echo "conda activate sonitr" >> ~/.bashrc
 
+RUN /opt/conda/bin/conda run -n sonitr pip install pytube
+
+# RUN apt-get install -y unzip
+# RUN wget -O /tmp/master.zip https://github.com/tokland/youtube-upload/archive/master.zip && \
+#     unzip /tmp/master.zip && \
+#     mv youtube-upload-master /youtube-upload && \
+#     ls -al /youtube-upload && \
+#     /opt/conda/bin/conda run -n sonitr python /youtube-upload/setup.py install
+
 # RUN sed -i '/app\.launch(/,/debug=/s/max_threads=1,/max_threads=1, server_name="0.0.0.0",/' /app/app_rvc.py

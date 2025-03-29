@@ -16,7 +16,6 @@ import srtParser2 from "srt-parser-2";
 import languageEncoding from "detect-file-encoding-and-language";
 import translator from "open-google-translator";
 import * as sqlite3 from "sqlite3";
-import { open } from "sqlite";
 
 async function checkFileExists(file) {
   try {
@@ -131,98 +130,6 @@ srts = srts.map((x) => {
   return { srt, strDataArray, outputPathInDownloads, outputPath };
 });
 
-async function translateSrt({ strDataArray, fromLanguage, toLanguage }) {
-  const dbPath = `${process.env.XDG_CACHE_HOME || `${process.env.HOME}/.cache`}/my-translate-srt-files-cache.sqlite`;
-
-  const db = await open({
-    filename: dbPath,
-    driver: sqlite3.Database,
-  });
-
-  await db.exec(`CREATE TABLE IF NOT EXISTS translations (
-    language_pair TEXT NOT NULL,
-    original TEXT NOT NULL,
-    translation TEXT NOT NULL,
-    PRIMARY KEY (language_pair, original)
-  )`);
-
-  const languagePair = `${fromLanguage}-${toLanguage}`;
-
-  const maybeTranslations = await Promise.all(
-    strDataArray
-      .map(({ text }) => text.trim())
-      .filter((x) => x)
-      .map(async (original) => {
-        const row = await db.get(
-          "SELECT translation FROM translations WHERE language_pair = ? AND original = ?",
-          [languagePair, original],
-        );
-        return {
-          original,
-          translation: row?.translation,
-        };
-      }),
-  );
-
-  const listOfWordsToTranslate = maybeTranslations
-    .map(({ original, translation }) => (!translation ? original : null))
-    .filter((x) => x);
-
-  // console.log(listOfWordsToTranslate)
-
-  let translations = [];
-
-  if (listOfWordsToTranslate.length > 0) {
-    console.log(
-      `requesting google translations ${listOfWordsToTranslate.length}`,
-    );
-    translations = await translator.TranslateLanguageData({
-      listOfWordsToTranslate,
-      fromLanguage,
-      toLanguage,
-    });
-  }
-
-  const invalidTranslations = translations.filter(
-    ({ translation }) => !translation.trim(),
-  );
-  console.log(invalidTranslations);
-  if (invalidTranslations.length > 0) {
-    throw new Error(
-      `no translation for ${invalidTranslations.map((x) => x.original)}`,
-    );
-  }
-
-  for (const { original, translation } of translations) {
-    await db.run(
-      "INSERT OR REPLACE INTO translations (language_pair, original, translation) VALUES (?, ?, ?)",
-      [languagePair, original, translation],
-    );
-  }
-
-  const output = await Promise.all(
-    strDataArray.map(async (strData) => {
-      const { text } = strData;
-      if (!text.trim()) {
-        return { ...strData, translation: text };
-      }
-      const row = await db.get(
-        "SELECT translation FROM translations WHERE language_pair = ? AND original = ?",
-        [languagePair, text.trim()],
-      );
-      const translation = row?.translation;
-      const valid = translation && !!translation.trim();
-      if (!valid) {
-        throw new Error(`no translation for ${text}: ${translation}`);
-      }
-      return { ...strData, translation };
-    }),
-  );
-  // console.log(output)
-
-  await db.close();
-  return output;
-}
 
 for (const { srt, strDataArray, outputPath } of srts) {
   console.log(`processing ${srt}`);

@@ -97,6 +97,7 @@ import time
 import hashlib
 import sys
 from app_rvc import SoniTranslate
+from pytube import Playlist
 
 if __name__ == "__main__":
     set_logging_level("debug")
@@ -118,34 +119,32 @@ if __name__ == "__main__":
     # mkdir -p "$DIR" && cd "$DIR"
     # yt-dlp --embed-subs "https://www.youtube.com/shorts/rYrKALtxOks"
     # wget -O thumbnail.jpg "https://img.youtube.com/vi/bbiu8SUgPr4/maxresdefault.jpg"
-    #
-    # cd ~/Downloads && unroot-root-files
-    # mkdir -p ~/Downloads/nevzorov/output-km/ && cd /home/srghma/Downloads/nevzorov
-    # yt-dlp --merge-output-format mp4 -f "bestvideo+bestaudio[ext=m4a]/best" "https://www.youtube.com/watch?v=bbiu8SUgPr4"
-    # wget -O thumbnail.jpg "https://img.youtube.com/vi/bbiu8SUgPr4/maxresdefault.jpg"
-    #
-    # video_path = "/home/srghma/Downloads/nevzorov/Трамп сделал ошибку.  Путин - хромая утка. Трамп не понимает за что воюет Россия. Прогноз. [bbiu8SUgPr4].mp4"
-    # output_dir_path = "/home/srghma/Downloads/nevzorov/output-km/"
-    #
-    video_path = "/home/srghma/Downloads/nevzorov-shorts/Что предлагают благовестники путинского режима #невзоров [rYrKALtxOks].webm"
-    output_dir_path = "/home/srghma/Downloads/nevzorov-shorts/output-km/"
 
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_dir_path), exist_ok=True)
+    # Get all video files in the Veritasium directory
+    veritasium_dir = "/home/srghma/Downloads/Veritasium"
+    output_dir = os.path.join(veritasium_dir, "output-km")
 
-    result = SoniTr.multilingual_media_conversion(
-        media_file=video_path,
-        # origin_language="English (en)",
-        # target_language="Khmer (km)",
-        origin_language="Russian (ru)",
-        target_language="English (en)",
-        # tts_voice00="km-KH-SreypichNeural-Female",
-        # tts_voice01="km-KH-PisethNeural-Male",
-        volume_original_audio=0.95,
-        diarization_model="pyannote_3.1",
-        voice_imitation=True,
-        is_gui=False,
-        progress=None
-    )
+    os.makedirs(output_dir, exist_ok=True)
 
-    print(f"Translation complete. Output saved to: {result}")
+    # Get list of video files
+    video_files = [f for f in os.listdir(veritasium_dir) if f.endswith(('.mp4', '.webm', '.mkv'))]
+
+    for video_file in video_files:
+        video_path = os.path.join(veritasium_dir, video_file)
+
+        result = SoniTr.multilingual_media_conversion(
+            media_file=video_path,
+            origin_language="English (en)",
+            target_language="Khmer (km)",
+            # origin_language="Russian (ru)",
+            # target_language="English (en)",
+            # tts_voice00="km-KH-SreypichNeural-Female",
+            tts_voice00="km-KH-PisethNeural-Male",
+            volume_original_audio=0.95,
+            diarization_model="pyannote_3.1",
+            voice_imitation=True,
+            is_gui=False,
+            progress=None
+        )
+
+        print(f"Translation complete. Output saved to: {result}")
