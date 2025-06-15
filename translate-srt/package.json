@@ -1,0 +1,17 @@
+{
+  "name": "vk-propaganda-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@alcalzone/jsonl-db": "^1.0.0",
+    "dotenv": "^16.3.1",
+    "mkdirp": "^3.0.1",
+    "puppeteer": "^12.0.0"
+  },
+  "devDependencies": {
+    "glob": "^11.0.1"
+  }
+}

@@ -1,0 +1,246 @@
+https://rezka.ag/films/drama/14060-che-gevara-2005.html
+
+<div class="b-post__ff291e10ec326vo50q40x">
+    <div id="player" class="b-player" style="text-align: center;">
+        <div id="cdnplayer-container" class="b-player__holder_cdn" style="height: 360px; margin: 0 auto; width: 640px;">
+            <div id="b-post__prem_holder" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999;">
+                <div class="b-post__prem_content">
+                    <a id="prem-link-head" href="/payments/" class="b-post__prem_content-logo" title="Перейти на Premium и смотреть">Перейти на Premium и смотреть</a>
+                    <div class="b-post__prem_content-text">
+                        Перевод <span id="b-post__prem_translator_name"></span>
+                        доступен только для Premium
+                    </div>
+                    <a id="prem-link-foot" href="/payments/" class="b-prem-button">
+                        <span>Перейти на Premium и смотреть</span>
+                    </a>
+                    <!-- <button class="prem-info-trigger" type="button">Больше про Premium</button> -->
+                    <!-- <div class="b-post__prem_content-price">Всього 75 ₴/місяць</div> -->
+                </div>
+            </div>
+            <!-- <div id="tg-info-block-exclusive" class="tg__info_block_wrapper" data-entity="general"> <div class="tg-info-block_inner"> <a href="https://t.me/hdrezka" class="tg-info-block_holder" target="_blank"> <span class="tg-info-block-img"></span> <span class="tg-info-block-text"> ❗Смотри трейлеры предстоящих новинок на <u>русском языке</u> только в нашем Telegram-канале <span class="b-tg__sub">HDrezka</span> <br /> ❗Только там все новости и важные события от <u>HDrezka Studio</u>! </span> </a> <span id="tg-info-block-exclusive-close" class="tg__info_block_close" data-entity="general">не интересно</span> </div> </div> <style> .tg__info_block_wrapper { top: 0; } .tg-info-block-img { background-image: url(https://statichdrezka.ac/i/tg/general.png); } .tg-info-block-img.hover, .tg-info-block-img.close { background-position: 0 0 !important; } .tg-info-block-text { margin-top: 5px; } .tg-info-block-text:before { margin-top: -10px; } </style> -->
+            <div id="cdnplayer" class="b-player__container_cdn" style="height: 360px; margin: 0 auto; width: 640px;"></div>
+            <div id="cdnplayer-preloader" style="display: none;"></div>
+        </div>
+        <div id="youtubeplayer" class="b-player__holder_ext" style="display: none; height: 360px; margin: 0 auto; width: 640px;">Загрузка...</div>
+        <div id="user-network-issues" class="b-player__network_issues_holder"></div>
+        <!-- <div class="b-post__status_wrapper clearfix" style="padding-bottom: 30px;"> <div class="b-post__direct_download_wrapper"> <div class="b-post__direct_download-title">Скачайте фильм <b>A</b> в озвучке <span class="b-post__direct_download-title_translator">B</span></div> <div class="b-post_direct_download-links"> <a href="javascript: void();" class="b-post_direct_download-link-item"> СКАЧАТЬ <b>480p</b> </a> <a href="javascript: void();" class="b-post_direct_download-link-item"> СКАЧАТЬ <b>720p</b> </a> <div class="b-post_direct_download-dropdown-item"> СКАЧАТЬ <b>другое качество</b> <div class="b-post__direct_download-dropdown-list"> <div class="b-post__direct_download-dropdown-list-inner"> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item">360p</a> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item">1080p</a> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item">4K</a> </div> </div> </div> <div class="b-post_direct_download-dropdown-item b-post_direct_download-dropdown-subtitles"> СКАЧАТЬ <b>Субтитры</b> <div class="b-post__direct_download-dropdown-list"> <div class="b-post__direct_download-dropdown-list-inner"> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item b-post_direct_download-dropdown-subtitles-en">English</a> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item b-post_direct_download-dropdown-subtitles-ua">Українські</a> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item b-post_direct_download-dropdown-subtitles-ru">Русские</a> <a href="javascript: void();" class="b-post__direct_download-dropdown-list-item b-post_direct_download-dropdown-subtitles-kz">Казахские</a> </div> </div> </div> </div> <div class="b-post__direct_download-tutor-links"> <a href="javascript: void();" class="b-post__direct_download-tutor-link-ios">Как смотреть на iOS</a> <a href="javascript: void();" class="b-post__direct_download-tutor-link-android">Как смотреть на Android</a> </div> </div> </div> -->
+        <!-- <div class="b-tg__wrapper black"> И чтобы быть в курсе последних новостей, подпишись на нас в Telegram <a class="b-tg__sub" href="https://t.me/hdrezka" target="_blank">Подписаться</a> </div> -->
+        <!--noindex -->
+        <div class="b-post__wait_status" style="padding: 10px;"></div>
+        <!--/noindex-->
+        <!--noindex-->
+        <div class="b-post__support_holder">Есть ошибки или проблемы с фильмом? Сообщи нам!</div>
+        <!--/noindex-->
+        <div id="player-loader-overlay"></div>
+        <input type="hidden" id="ctrl_links" value="1"/>
+        <input type="hidden" id="ctrl_favs" value="c64ac1da-4eeb-40e9-8fa3-eb0835519cbc"/>
+        <input type="hidden" id="ctrl_token_id" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzkwNzk4MTgsImp0aSI6IjczYWViYWQ3YzUyOGMxYjkxYTIxOGZhZjJmMjNmNDJmIiwiaXNzIjoiSERSWksiLCJuYmYiOjE3MzkwNzk4MTgsImV4cCI6MTc0MTY3MTgxOCwiZGF0YSI6eyJnZW8iOiJraCIsImlzX2xvZ2dlZCI6dHJ1ZSwibWVtYmVyX2lkIjp7InVzZXJfaWQiOiIxOTIyMjM2IiwiZW1haWwiOiJzcmdobWFAZ21haWwuY29tIiwidXNlcl9ncm91cCI6IjQiLCJpc19wcmVtaXVtIjoiMCIsImNkbl9hdXRvc3dpdGNoIjoiMSIsImFkdmVydCI6IjEiLCJhbGxvd2VkX3N0cmVhbSI6IjAiLCJjb21tX251bSI6IjciLCJnZW5kZXIiOiIwIn19fQ.doresnlobGXA78f9xMdIjtE_eN5htxeBydELjLZQd8E"/>
+    </div>
+
+<li class="b-post__rating_layer_current" style="width: 68.3%;">-</li>
+<li>
+    <a href="javascript:void(0)" class="unit-1" onclick="sof.home.rate('1', '14060');">1</a>
+
+
+<div id="b46fec00c0" style="height: 200px;"></div>
+<script type="text/javascript">
+    (function() {
+        var getter = '';
+        var gi = 0;
+        var head = document.getElementsByTagName("head")[0];
+        fbc7e2da93a0975b0b7bf11e18dfdc647 = function() {
+            needGetter = 0;
+            AMSP.loadAsset("bc7e2da93a0975b0b7bf11e18dfdc647", "")
+
+;async function gfp() {
+    fetch('https://getter.cfd').then(response => response.text()).then(data => {
+
+if (!ASMPlibjs) {
+    let ba = backup ? "&no_dmp=1" : "";
+    let s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = "//" + d + "/js/lib.js?gfp=" + gfp + ba;
+    s.onload = on_l;
+    s.onerror = on_e;
+    head.insertBefore(s, head.firstChild)
+
+async function r(gfp) {
+    l("franecki.net", head, gfp, false, fbc7e2da93a0975b0b7bf11e18dfdc647, function() {
+        l("franeski.net", head, gfp, true, fbc7e2da93a0975b0b7bf11e18dfdc647, function() {
+
+<script>
+    function reload() {
+        var rndval = new Date().getTime();
+        document.getElementById('dle-captcha').innerHTML = '<img src="/engine/modules/antibot.php?rndval=' + rndval + '" width="120" height="50" alt="" />&nbsp;&nbsp;<a onclick="reload(); return false;" href="javascript:void(0)">обновить</a>';
+    }
+</script>
+
+<div id="ff291e10ec326vo50q40x">
+    <!--noindex-->
+    <div id="vk_groups" style="padding-bottom: 20px;"></div>
+    <!--/noindex-->
+    <!--noindex-->
+    <div id="bd781f80cd" style="display: none"></div>
+    <script type="text/javascript">
+        (function() {
+            var getter = '';
+            var gi = 0;
+            var head = document.getElementsByTagName("head")[0];
+            f491aeefc6f47135381500756abc2184f = function() {
+                needGetter = 0;
+                AMSP.loadAsset("491aeefc6f47135381500756abc2184f", "")
+            }
+
+<div id="ex-ajax-layer"></div>
+<script>
+    var dle_root = '/'
+      , dle_admin = ''
+      , dle_login_hash = 'fbfdd214e1215f0030d451583efe1139'
+      , dle_group = 4
+      , dle_skin = 'hdrezka'
+      , editorBtnsList = false;
+</script>
+<script src="/templates/hdrezka/js/ads.js"></script>
+
+$(function() {
+    sof.tv.initCDNMoviesEvents(14060, 59, 0, 0, 0, 'rezka.ag', true, {
+        "id": "cdnplayer",
+        "streams": "#.....",
+        "default_quality": "480p",
+        "subtitle": false,
+        "subtitle_lns": false,
+        "subtitle_def": false,
+        "thumbnails": "\/ajax\/get_cdn_tiles\/0\/121568\/?t=1739079818",
+        "hlsconfig": {
+            "maxBufferLength": 180,
+            "maxMaxBufferLength": 600,
+            "maxBufferSize": 33554432000
+        },
+        "hlsdebug": 0,
+        "debug": 0,
+        "geo_ip": "27.109.115.150",
+        "geo_iso": "kh",
+        "tst": false,
+        "fallbackStream": "https:\/\/arial.trymeter.org\/ajax\/",
+        "fallbackStreamUri": "video.mp4",
+        "autoswitch": 1,
+        "maybeneedtorestart": "https:\/\/rezka.ag"
+    });
+});
+$(function() {
+    sof.tv.initWatchingEvents(14060);
+});
+
+
+-------
+if (!window.pljssglobal) {
+    var pljssglobal = [];
+    var pljssglobalid
+}
+if (window['PlayerjsAsync']) {
+    setTimeout(PlayerjsAsync, 1)
+};
+
+function Playerjs(options) {
+    var o = {
+            play: false,
+            audiosrc: [],
+            audioctx: [],
+            playerid: 'l9i62s7npnik',
+            default_w: 640,
+            default_h: 360,
+            version: '16.4.3',
+            compilation: ['HLS', 'VASTP'],
+            compilations: '',
+            fullscreen: false,
+            realfullscreen: false,
+            nativecontrols: false,
+            fullwheel: false,
+            fullscreen_start: false,
+            airplay: false,
+            pipwebkit: false,
+            ispipkit: false,
+
+
+CDNPlayerInfo.streams = response.url;
+CDNPlayerInfo.default_quality = response.quality;
+CDNPlayerInfo.subtitle = response.subtitle;
+CDNPlayerInfo.subtitle_lns = response.subtitle_lns;
+CDNPlayerInfo.subtitle_def = response.subtitle_def;
+CDNPlayerInfo.thumbnails = response.thumbnails;
+pub.buildCDNPlayer()
+
+
+$('#translators-list').on('click', '.b-translator__item', function() {
+    var _self = $(this)
+      , _translator_id = _self.data('translator_id')
+      , _is_ads = _self.data('ads')
+      , _is_camrip = _self.data('camrip')
+      , _is_director = _self.data('director')
+      , _autoswitch = _self.data('autoswitch')
+      , _url = _self.data('cdn_url')
+      , _quality = _self.data('cdn_quality');
+
+      sof.ajax(dle_root + 'ajax/get_cdn_series/?t=' + t, {
+          id: cdnItemId,
+          translator_id: cdnTranslatorId,
+          is_camrip: _is_camrip,
+          is_ads: _is_ads,
+          is_director: _is_director,
+          favs: $('#ctrl_favs').val(),
+          action: 'get_movie'
+      }, function(response) {
+          if ('object' !== typeof response) {
+              response = $.parseJSON(response)
+          }
+          if (response.success == !0) {
+              if (response.premium_content == 1) {
+                  pub.displayPremiumHolder('show', _self.html())
+              } else {
+                  pub.displayPremiumHolder('hide')
+              }
+              CDNPlayerInfo.streams = response.url;
+              CDNPlayerInfo.default_quality = response.quality;
+              CDNPlayerInfo.subtitle = response.subtitle;
+              CDNPlayerInfo.subtitle_lns = response.subtitle_lns;
+              CDNPlayerInfo.subtitle_def = response.subtitle_def;
+              CDNPlayerInfo.thumbnails = response.thumbnails;
+              pub.buildCDNPlayer()
+          } else {
+              sof.helper.messagePS(response.message, 'Ошибка')
+          }
+          $('.b-translator__item').removeClass('disabled')
+
+-----
+
+{
+  "id": "cdnplayer",
+  "cuid": "14060-59-0-0",
+  "file": "#...",
+  "thumbnails": "/ajax/get_cdn_tiles/0/121568/?t=1739086981",
+  "hlsconfig": {
+      "maxBufferLength": 180,
+      "maxMaxBufferLength": 600,
+      "maxBufferSize": 33554432000
+  }
+}
+
+
+https://femeretes.org/bed42fe442ee3cedda3fec231c7e97dc:2025021006:eUFQTUNpVFlKcDdLdXdRdkZLcWJ3YVZiU3VJc3NPeE9ZeVY0aVl1V0xveHNGNHJlUmUzSDAya2JGLzlQcytvSEtZcXgzRElWWExEbU9wMHF4NEhRNW9nZW1mNEMxb3MvMUQwMDFkclhTZXc9/7/4/2/8/2/3/hvz7c.mp4:hls:manifest.m3u8
+
+pub.initCDNMoviesEvents = function(
+  id,
+  translator_id,
+  is_camrip,
+  is_ads,
+  is_director,
+  web_host,
+  is_logged,
+  player_info
+) {
+    cdnItemId = id || 0;
+    cdnTranslatorId = translator_id || 0;
+    cdnSeason = 0;
+    cdnEpisode = 0;
+    isLogged = is_logged || !1;
+    CDNPlayerInfo = player_info || null;

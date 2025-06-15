@@ -55,7 +55,7 @@ def clean_text(text):
     return text if text not in symbol_list else ""
 
 
-def srt_file_to_segments(file_path, speaker=False):
+def srt_file_to_segments(file_path, speaker=False) -> dict:
     try:
         srt_content_list = extract_from_srt(file_path)
     except Exception as error:

@@ -16,7 +16,7 @@ from soni_translate.text_to_speech import (
     create_wav_file_vc,
     accelerate_segments,
 )
-from soni_translate.translate_segments import (
+from soni_translate.translate_segments_cached import (
     translate_text,
     TRANSLATION_PROCESS_OPTIONS,
     DOCS_TRANSLATION_PROCESS_OPTIONS
@@ -450,6 +450,7 @@ class SoniTranslate(SoniTrCache):
             "gpt" in translate_process
             or transcriber_model == "OpenAI_API_Whisper"
             or "OpenAI-TTS" in tts_voice00
+            or "OpenAI-TTS" in tts_voice01
         ):
             check_openai_api_key()
 
@@ -519,14 +520,14 @@ class SoniTranslate(SoniTrCache):
             )
             warn_disp(wrn_lang, is_gui)
 
-        if tts_voice00[:2].lower() != TRANSLATE_AUDIO_TO[:2].lower():
+        if tts_voice00[:2].lower() != TRANSLATE_AUDIO_TO[:2].lower() or tts_voice01[:2].lower() != TRANSLATE_AUDIO_TO[:2].lower():
             wrn_lang = (
                 "Make sure to select a 'TTS Speaker' suitable for"
                 " the translation language to avoid errors with the TTS."
             )
             warn_disp(wrn_lang, is_gui)
 
-        if "_XTTS_" in tts_voice00 and voice_imitation:
+        if ("_XTTS_" in tts_voice00 or "_XTTS_" in tts_voice01) and voice_imitation:
             wrn_lang = (
                 "When you select XTTS, it is advisable "
                 "to disable Voice Imitation."
@@ -835,6 +836,7 @@ class SoniTranslate(SoniTrCache):
                 raise ValueError("Generate the transcription first.")
             # with open('text_json.json', 'r') as file:
             text_json_loaded = json.loads(text_json)
+            print(self.result_diarize["segments"])
             for i, segment in enumerate(self.result_diarize["segments"]):
                 segment["text"] = text_json_loaded[i]["text"]
                 segment["speaker"] = "SPEAKER_{:02d}".format(
@@ -2861,4 +2863,5 @@ if __name__ == "__main__":
         show_error=True,
         quiet=False,
         debug=(True if logger.isEnabledFor(logging.DEBUG) else False),
+        server_name="0.0.0.0",
     )

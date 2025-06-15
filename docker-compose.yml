@@ -1,0 +1,57 @@
+# docker cp sonitranslate:/root/.EasyOCR/ ./.EasyOCR/
+# docker cp sonitranslate:/root/.cache/huggingface/ ./.root-cache-huggingface/
+# docker cp sonitranslate:/root/.cache/torch/ ./.root-cache-torch/
+# docker cp sonitranslate:/root/.cache/matplotlib/ ./.root-cache-matplotlib/
+
+services:
+  sonitranslate:
+    image: soni_translate_image
+    command: python /app/app_cli.py
+    env_file:
+      - .env
+    environment:
+      - TRANSLATION_CACHE_SQLITE_PATH=/app/.translation-cache/translation-cache.sqlite
+    ports:
+      - 7860:7860
+    volumes:
+      - ./.env:/app/.env
+      - ./_XTTS_:/app/_XTTS_ # optional, not ignored
+      - ./app_cli.py:/app/app_cli.py
+      - ./app_rvc.py:/app/app_rvc.py
+      - ./assets:/app/assets
+      - ./docs:/app/docs
+      - ./flake.lock:/app/flake.lock
+      - ./flake.nix:/app/flake.nix
+      - ./image_translate.py:/app/image_translate.py
+      - ./lib:/app/lib
+      - ./package-lock.json:/app/package-lock.json
+      - ./package.json:/app/package.json
+      - ./player:/app/player
+      - ./playwright.config.js:/app/playwright.config.js
+      - ./premiere-pro-scripts:/app/premiere-pro-scripts
+      - ./mdx_models:/app/mdx_models
+      - ./weights:/app/weights
+      - ./PIPER_MODELS:/app/PIPER_MODELS
+      - ./requirements.txt:/app/requirements.txt
+      - ./requirements_base.txt:/app/requirements_base.txt
+      - ./requirements_extra.txt:/app/requirements_extra.txt
+      - ./requirements_xtts.txt:/app/requirements_xtts.txt
+      - ./soni_translate:/app/soni_translate
+      - ./srt-to-json.js:/app/srt-to-json.js
+      - ./translate-srt:/app/translate-srt
+      - ./translate-sub-google.js:/app/translate-sub-google.js
+      - ./vci_pipeline.py:/app/vci_pipeline.py
+      - ./voice_main.py:/app/voice_main.py
+      - ./.translation-cache:/app/.translation-cache
+
+      # - .:/app
+      - ./.EasyOCR/:/root/.EasyOCR/
+      - ./.root-local-share-tts:/root/.local/share/tts
+      - ./.root-cache-huggingface/:/root/.cache/huggingface/
+      - ./.root-cache-torch/:/root/.cache/torch/
+      - ./.root-cache-matplotlib/:/root/.cache/matplotlib/
+      - /home/srghma/Downloads/:/home/srghma/Downloads/
+      - /home/srghma/Videos/:/home/srghma/Videos/
+    stdin_open: true
+    tty: true
+    restart: "no" # Equivalent to --rm, removes container after stopping
