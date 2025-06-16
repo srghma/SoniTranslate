@@ -126,8 +126,8 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
     # Get list of video files
-    # video_files = [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(('.mp4', '.webm', '.mkv'))]
-    video_files = ["/home/srghma/Videos/russians-torture/IMG_1651.MP4"]
+    video_files = [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(('.mp4', '.webm', '.mkv'))]
+    # video_files = ["/home/srghma/Videos/russians-torture/IMG_1651.MP4"]
 
     for video_path in video_files:
         result = SoniTr.multilingual_media_conversion(

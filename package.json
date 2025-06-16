@@ -16,6 +16,7 @@
     "detect-file-encoding-and-language": "^2.4.0",
     "fs-extra": "^11.3.0",
     "google-translate-api": "^2.3.0",
+    "json2csv": "^6.0.0-alpha.2",
     "keyv": "^5.2.3",
     "open-google-translator": "^1.0.5",
     "path-complete-extname": "^1.0.0",
