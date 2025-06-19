@@ -14,35 +14,39 @@ services:
     ports:
       - 7860:7860
     volumes:
-      - ./.env:/app/.env
+      - ./.env:/app/.env:ro
       - ./_XTTS_:/app/_XTTS_ # optional, not ignored
-      - ./app_cli.py:/app/app_cli.py
-      - ./app_rvc.py:/app/app_rvc.py
+      - ./app_cli.py:/app/app_cli.py:ro
+      - ./app_rvc.py:/app/app_rvc.py:ro
       - ./assets:/app/assets
-      - ./docs:/app/docs
+      - ./docs:/app/docs:ro
       - ./flake.lock:/app/flake.lock
-      - ./flake.nix:/app/flake.nix
+      - ./flake.nix:/app/flake.nix:ro
       - ./image_translate.py:/app/image_translate.py
       - ./lib:/app/lib
-      - ./package-lock.json:/app/package-lock.json
-      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json:ro
+      - ./package.json:/app/package.json:ro
       - ./player:/app/player
       - ./playwright.config.js:/app/playwright.config.js
       - ./premiere-pro-scripts:/app/premiere-pro-scripts
       - ./mdx_models:/app/mdx_models
       - ./weights:/app/weights
       - ./PIPER_MODELS:/app/PIPER_MODELS
-      - ./requirements.txt:/app/requirements.txt
-      - ./requirements_base.txt:/app/requirements_base.txt
-      - ./requirements_extra.txt:/app/requirements_extra.txt
-      - ./requirements_xtts.txt:/app/requirements_xtts.txt
-      - ./soni_translate:/app/soni_translate
-      - ./srt-to-json.js:/app/srt-to-json.js
+      - ./requirements.txt:/app/requirements.txt:ro
+      - ./requirements_base.txt:/app/requirements_base.txt:ro
+      - ./requirements_extra.txt:/app/requirements_extra.txt:ro
+      - ./requirements_xtts.txt:/app/requirements_xtts.txt:ro
+      - ./soni_translate:/app/soni_translate:ro
+      - ./srt-to-json.js:/app/srt-to-json.js:ro
       - ./translate-srt:/app/translate-srt
-      - ./translate-sub-google.js:/app/translate-sub-google.js
-      - ./vci_pipeline.py:/app/vci_pipeline.py
-      - ./voice_main.py:/app/voice_main.py
+      - ./translate-sub-google.js:/app/translate-sub-google.js:ro
+      - ./vci_pipeline.py:/app/vci_pipeline.py:ro
+      - ./voice_main.py:/app/voice_main.py:ro
       - ./.translation-cache:/app/.translation-cache
+      - ./ep100renderaudio.py:/app/ep100renderaudio.py
+      - ./ep100renderslides.py:/app/ep100renderslides.py
+      - ./ep100rendercombine.py:/app/ep100rendercombine.py
+      - ./ep100 dd - Sheet1.csv:/app/ep100 dd - Sheet1.csv
 
       # - .:/app
       - ./.EasyOCR/:/root/.EasyOCR/

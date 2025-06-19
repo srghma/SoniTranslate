@@ -59,6 +59,7 @@ RUN /opt/conda/bin/conda run -n sonitr pip install googletrans pillow easyocr de
 RUN /opt/conda/bin/conda run -n sonitr pip install pytube
 RUN /opt/conda/bin/conda run -n sonitr pip install piper
 RUN /opt/conda/bin/conda run -n sonitr pip install piper-tts
+RUN /opt/conda/bin/conda run -n sonitr pip install moviepy
 
 # RUN mkdir -p /app/mdx_models && \
 #     wget -O /app/mdx_models/UVR-MDX-NET-Voc_FT.onnx "https://github.com/TRvlvr/model_repo/releases/download/all_public_uvr_models/UVR-MDX-NET-Voc_FT.onnx" && \

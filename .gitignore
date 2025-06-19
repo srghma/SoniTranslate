@@ -228,3 +228,4 @@ model/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+.translation-cache/
