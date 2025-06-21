@@ -43,9 +43,7 @@ services:
       - ./vci_pipeline.py:/app/vci_pipeline.py:ro
       - ./voice_main.py:/app/voice_main.py:ro
       - ./.translation-cache:/app/.translation-cache
-      - ./ep100renderaudio.py:/app/ep100renderaudio.py
-      - ./ep100renderslides.py:/app/ep100renderslides.py
-      - ./ep100rendercombine.py:/app/ep100rendercombine.py
+      - ./ep100:/app/ep100:ro
       - ./ep100 dd - Sheet1.csv:/app/ep100 dd - Sheet1.csv
 
       # - .:/app
