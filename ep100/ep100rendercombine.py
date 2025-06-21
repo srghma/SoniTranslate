@@ -9,12 +9,13 @@ from ep100renderaudio import make_filename, get_ru_voice, get_ua_voice
 
 # Paths and constants
 csv_path = "/app/ep100 dd - Sheet1.csv"
-tts_output_dir = "/app/.translation-cache/edge-tts-audio-fixed-output"
+tts_output_dir = "/app/.translation-cache/edge-tts-audio-output"
 slides_output_dir = "/app/.translation-cache/edge-tts-slides-output"
 clips_cache_dir = "/app/.translation-cache/edge-tts-clips-output"
 video_output_dir = "/home/srghma/Videos"  # Directory for output videos
 LANGS = ["ru", "ua"]
 WIDTH, HEIGHT = 1280, 720
+FRAME_RATE = 25  # <<< NEW: Standard frame rate for all clips
 
 # Ensure cache directory exists
 os.makedirs(clips_cache_dir, exist_ok=True)
@@ -72,13 +73,14 @@ def get_file_hash(filepath):
 def get_clip_cache_path(lang, speaker, text):
     """
     Generates a unique, deterministic cache filename for a clip based on its dependencies.
-    The hash includes the content (lang, speaker, text), video dimensions,
+    The hash includes the content (lang, speaker, text), video dimensions, frame rate,
     and the file hashes of the source audio and slide image.
     """
     slide_path = get_slide_path(lang, speaker, text)
     audio_path = get_audio_path(lang, speaker, text)
 
-    hash_input = f"{lang}:{speaker}:{text}:{WIDTH}:{HEIGHT}"
+    # <<< MODIFIED: Added FRAME_RATE to the hash to ensure cache invalidation
+    hash_input = f"{lang}:{speaker}:{text}:{WIDTH}:{HEIGHT}:{FRAME_RATE}"
 
     slide_hash = get_file_hash(slide_path)
     audio_hash = get_file_hash(audio_path)
@@ -92,20 +94,51 @@ def get_clip_cache_path(lang, speaker, text):
     return os.path.join(clips_cache_dir, f"clip_{lang}_{clip_hash}.mp4")
 
 
+# <<< NEW: Helper function to get audio duration using ffprobe
+def get_audio_duration(audio_path):
+    """Gets the duration of an audio file in seconds using ffprobe."""
+    cmd = [
+        'ffprobe',
+        '-v', 'error',
+        '-show_entries', 'format=duration',
+        '-of', 'default=noprint_wrappers=1:nokey=1',
+        audio_path
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        return float(result.stdout.strip())
+    except (subprocess.CalledProcessError, FileNotFoundError, ValueError) as e:
+        print(f"❌ Error getting duration for {os.path.basename(audio_path)}: {e}")
+        return None
+
+
+# <<< MODIFIED: This function is the core of the fix.
 def create_video_with_ffmpeg(image_path, audio_path, output_path):
-    """Creates a video clip from a single image and audio file using ffmpeg."""
+    """
+    Creates a video clip with a proper video stream (not single-frame),
+    making it suitable for fast concatenation.
+    """
+    # 1. Get the exact audio duration to set the clip length
+    duration = get_audio_duration(audio_path)
+    if duration is None:
+        return False  # Cannot proceed without duration
+
     cmd = [
         'ffmpeg', '-y',
-        '-loop', '1',
+        '-loop', '1',              # Loop the input image to create a continuous stream
         '-i', image_path,
         '-i', audio_path,
         '-c:v', 'libx264',
+        '-tune', 'stillimage',     # Optimize libx264 for static images
         '-c:a', 'aac',
-        '-shortest',
         '-pix_fmt', 'yuv420p',
+        '-r', str(FRAME_RATE),     # Set a standard frame rate
         '-vf', f'scale={WIDTH}:{HEIGHT}',
+        '-t', str(duration),       # Set the exact output duration to match the audio
         output_path
     ]
+    # Note: We replaced '-shortest' with '-loop 1', '-r', and '-t <duration>'.
+
     try:
         subprocess.run(cmd, capture_output=True, text=True, check=True, encoding='utf-8')
         return True
@@ -123,7 +156,8 @@ def get_or_create_clip(lang, speaker, text):
 
     # 1. Check if a valid cached clip already exists.
     if os.path.exists(cached_clip_path):
-        print(f"💾 Using cached {lang} clip: {os.path.basename(cached_clip_path)}")
+        # This message is now more informative for debugging.
+        # print(f"💾 Using cached {lang} clip: {os.path.basename(cached_clip_path)}")
         return cached_clip_path
 
     # 2. If not cached, check for source files.
@@ -157,8 +191,6 @@ def build_video_for_language(lang):
 
     video_output_path = os.path.join(video_output_dir, f"ep100-compiled-{lang}.mp4")
 
-    # Use a ProcessPoolExecutor to run clip creation in parallel.
-    # It will use up to the number of CPU cores on the machine.
     max_workers = os.cpu_count()
     print(f"⚙️ Submitting {len(sentence_data)} clip creation jobs to {max_workers} parallel workers...")
 
@@ -166,40 +198,42 @@ def build_video_for_language(lang):
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         for speaker, _, lang_texts in sentence_data:
             text = lang_texts[lang]
-            # Submit the job to the pool. It will run get_or_create_clip in a separate process.
             future = executor.submit(get_or_create_clip, lang, speaker, text)
             futures.append(future)
 
-    # Collect the results. futures are in the original submission order.
-    # future.result() will wait for each specific job to complete, ensuring
-    # the final `valid_clips` list is in the correct sequence.
     valid_clips = []
     print(f"\n⏳ Waiting for {len(futures)} clip jobs to complete...")
-    for i, future in enumerate(futures):
+    for i, future in enumerate(concurrent.futures.as_completed(futures)):
         try:
             clip_path = future.result()
             if clip_path:
                 valid_clips.append(clip_path)
-            else:
-                # This handles cases where get_or_create_clip returned None (e.g., missing source file).
-                print(f"↪️ Skipping clip #{i+1} for {lang.upper()} (task completed but no valid path returned).")
+            # The list 'valid_clips' will be out of order here, but the concat file will be created later from an ordered list.
         except Exception as e:
-            print(f"❌ Clip #{i+1} for {lang.upper()} failed with an exception: {e}")
+            print(f"❌ A clip creation task failed with an exception: {e}")
+    
+    # Re-create the ordered list of clips now that all futures are complete.
+    # This ensures the final video is in the correct sequence.
+    ordered_valid_clips = []
+    for future in futures:
+        if future.done() and not future.cancelled() and future.exception() is None:
+            clip_path = future.result()
+            if clip_path:
+                ordered_valid_clips.append(clip_path)
 
-    if not valid_clips:
+    if not ordered_valid_clips:
         print(f"❌ No valid clips were created for {lang.upper()}. Aborting video creation.")
         return False
 
-    print(f"\n📊 {lang.upper()}: Assembling final video from {len(valid_clips)} clips.")
+    print(f"\n📊 {lang.upper()}: Assembling final video from {len(ordered_valid_clips)} clips.")
 
-    # Create a temporary file for ffmpeg's concat demuxer.
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False, encoding='utf-8') as f:
         concat_file = f.name
-        for clip_path in valid_clips:
-            # Use single quotes to handle potential spaces or special characters in paths.
+        for clip_path in ordered_valid_clips:
             f.write(f"file '{os.path.abspath(clip_path)}'\n")
 
     # Concatenate all videos using the generated file list.
+    # This should now work reliably and quickly.
     concat_cmd = [
         'ffmpeg', '-y',
         '-f', 'concat',
@@ -210,26 +244,24 @@ def build_video_for_language(lang):
     ]
 
     try:
-        print(f"ffmpeg concat command: {' '.join(concat_cmd)}")
+        print(f"Running fast concat command: {' '.join(concat_cmd)}")
         subprocess.run(concat_cmd, capture_output=True, text=True, check=True, encoding='utf-8')
         print(f"🎬 {lang.upper()} video saved to: {video_output_path}")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ {lang.upper()} concatenation with stream copy failed. Retrying with re-encoding.")
+        print(f"❌ {lang.upper()} concatenation with stream copy failed. This shouldn't happen with the new clips.")
         print(f"ffmpeg error: {e.stderr}")
-
-        # Fallback: re-encode if stream copy fails (e.g., due to format inconsistencies).
+        # The fallback is kept just in case, but it should not be needed anymore.
         fallback_cmd = [
             'ffmpeg', '-y',
             '-f', 'concat',
             '-safe', '0',
             '-i', concat_file,
-            '-c:v', 'libx264',
-            '-c:a', 'aac',
-            '-pix_fmt', 'yuv420p',
+            '-c:v', 'libx264', '-c:a', 'aac', '-pix_fmt', 'yuv420p',
             video_output_path
         ]
         try:
+            print("Retrying with full re-encoding...")
             subprocess.run(fallback_cmd, capture_output=True, text=True, check=True, encoding='utf-8')
             print(f"🎬 {lang.upper()} video saved to: {video_output_path} (with re-encoding)")
             return True
@@ -238,7 +270,7 @@ def build_video_for_language(lang):
             print(f"ffmpeg error: {e2.stderr}")
             return False
     finally:
-        os.unlink(concat_file) # Clean up the temporary file.
+        os.unlink(concat_file)
 
 
 def build_videos_for_all_languages():
@@ -259,4 +291,3 @@ def build_videos_for_all_languages():
 
 if __name__ == "__main__":
     build_videos_for_all_languages()
-    # subprocess.run("cp /app/ep100-compiled-* /home/srghma/Videos", capture_output=True, text=True, check=True, encoding='utf-8')
