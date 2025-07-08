@@ -4,6 +4,7 @@ from soni_translate.logging_setup import (
     configure_logging_libs,
 ); configure_logging_libs() # noqa
 import whisperx
+import shutil
 import torch
 import os
 from soni_translate.audio_segments import create_translated_audio
@@ -121,7 +122,7 @@ if __name__ == "__main__":
 
     # Get all video files in the Veritasium directory
     input_dir = "/home/srghma/Videos/"
-    output_dir = "/home/srghma/Videos/output-uk/"
+    output_dir = "/home/srghma/Videos/output-ru/"
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -132,16 +133,18 @@ if __name__ == "__main__":
     for video_path in video_files:
         result = SoniTr.multilingual_media_conversion(
             media_file=video_path,
+            min_speakers=1,
+            max_speakers=2,
             origin_language="English (en)",
-            target_language="Ukrainian (uk)",
-            # origin_language="Russian (ru)",
+            # target_language="Ukrainian (uk)",
+            target_language="Russian (ru)",
             # target_language="Khmer (km)",
             # target_language="English (en)",
             # tts_voice00="km-KH-SreypichNeural-Female",
-            # tts_voice00="ru_RU-denis-medium VITS-onnx",
-            # tts_voice00="ru_speaker_0-Male BARK",
-            tts_voice00="uk-UA-OstapNeural-Male", # Azure
-            # tts_voice00="uk_UA-ukrainian_tts-medium VITS-onnx",
+            tts_voice00="ru_RU-denis-medium VITS-onnx",
+            tts_voice00="ru_speaker_0-Male BARK",
+            # tts_voice00="uk-UA-OstapNeural-Male", # Azure
+            # tts_voice01="uk_UA-ukrainian_tts-medium VITS-onnx",
             # volume_original_audio=0.95,
             diarization_model="pyannote_3.1",
             voice_imitation=True,
@@ -151,7 +154,7 @@ if __name__ == "__main__":
 
         print(f"Translation complete. Output saved to: {result}")
 
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
 
         for result_file in result:
             shutil.copy2(result_file, Path(output_dir) / Path(result_file).name)

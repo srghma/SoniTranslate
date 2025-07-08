@@ -1,7 +1,7 @@
 from gtts import gTTS
-import edge_tts, asyncio, json, glob # noqa
+import edge_tts, asyncio, json, glob, shutil # noqa
 from tqdm import tqdm
-import librosa, os, re, torch, gc, subprocess # noqa
+import librosa, os, re, torch, gc, subprocess, hashlib # noqa
 from .language_configuration import (
     fix_code_language,
     BARK_VOICES_LIST,
@@ -26,6 +26,23 @@ import logging
 import traceback
 from .logging_setup import logger
 
+# --- Edge TTS Caching Configuration ---
+EDGE_TTS_CACHE_DIR = os.path.join(os.getcwd(), ".edge-tts-cache")
+os.makedirs(EDGE_TTS_CACHE_DIR, exist_ok=True)
+# ------------------------------------
+
+# Place this block right before the # ===================================== # EDGE TTS # ===================================== line
+
+def hash_text(text: str) -> str:
+    """Creates an MD5 hash of the given text."""
+    return hashlib.md5(text.encode("utf-8")).hexdigest()
+
+def make_edge_tts_cache_filename(lang: str, voice: str, text: str) -> str:
+    """Creates a unique, sanitized .ogg filename for caching."""
+    h = hash_text(text)
+    # Sanitize voice name by removing gender for consistency with command line
+    sanitized_voice = voice.replace("-Male", "").replace("-Female", "")
+    return f"{lang}-{sanitized_voice}-{h}.ogg"
 
 class TTS_OperationError(Exception):
     def __init__(self, message="The operation did not complete successfully."):
@@ -159,29 +176,47 @@ def segments_egde_tts(filtered_edge_segments, TRANSLATE_AUDIO_TO, is_gui):
         start = segment["start"]
         tts_name = segment["tts_name"]
 
-        # make the tts audio
+        # Final output path required by the rest of the script
         filename = f"audio/{start}.ogg"
-        temp_file = filename[:-3] + "mp3"
-
         logger.info(f"{text} >> {filename}")
+
         try:
+            # --- Caching Logic (for final .ogg file) ---
+            voice_for_cache = tts_name.replace("-Male", "").replace("-Female", "")
+            cached_filename = make_edge_tts_cache_filename(TRANSLATE_AUDIO_TO, voice_for_cache, text)
+            cached_filepath = os.path.join(EDGE_TTS_CACHE_DIR, cached_filename)
+
+            if os.path.exists(cached_filepath) and os.path.getsize(cached_filepath) > 0:
+                # CACHE HIT: Copy the cached OGG directly to the destination
+                logger.info(f"CACHE HIT for '{text[:40]}...'")
+                shutil.copy(cached_filepath, filename)
+                verify_saved_file_and_size(filename)
+                continue  # Skip to the next segment
+
+            # --- CACHE MISS: Generate, Process, and then Cache the final .ogg ---
+            logger.info(f"CACHE MISS for '{text[:40]}...'. Generating audio.")
+            temp_file = filename[:-3] + "mp3"
+
+            # 1. Generate MP3 from Edge TTS (no rate)
             if is_gui:
-                asyncio.run(
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(
                     edge_tts.Communicate(
                         text, "-".join(tts_name.split("-")[:-1])
                     ).save(temp_file)
                 )
             else:
-                # nest_asyncio.apply() if not is_gui else None
-                command = f'edge-tts -t "{text}" -v "{tts_name.replace("-Male", "").replace("-Female", "")}" --write-media "{temp_file}"'
+                command = f'edge-tts -t "{text}" -v "{voice_for_cache}" --write-media "{temp_file}"'
                 run_command(command)
+
             verify_saved_file_and_size(temp_file)
 
+            # 2. Process MP3 to OGG
             data, sample_rate = sf.read(temp_file)
             data = pad_array(data, sample_rate)
-            # os.remove(temp_file)
+            os.remove(temp_file) # Clean up the intermediate mp3
 
-            # Save file
+            # 3. Save final OGG file to primary audio/ directory
             write_chunked(
                 file=filename,
                 samplerate=sample_rate,
@@ -190,6 +225,10 @@ def segments_egde_tts(filtered_edge_segments, TRANSLATE_AUDIO_TO, is_gui):
                 subtype="vorbis",
             )
             verify_saved_file_and_size(filename)
+
+            # 4. Save the final OGG to the cache for future use
+            shutil.copy(filename, cached_filepath)
+            logger.info(f"Saved to cache: {cached_filepath}")
 
         except Exception as error:
             error_handling_in_tts(error, segment, TRANSLATE_AUDIO_TO, filename)
