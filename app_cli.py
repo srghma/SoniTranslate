@@ -121,35 +121,41 @@ if __name__ == "__main__":
     # wget -O thumbnail.jpg "https://img.youtube.com/vi/bbiu8SUgPr4/maxresdefault.jpg"
 
     # Get all video files in the Veritasium directory
-    input_dir = "/home/srghma/Videos/"
-    output_dir = "/home/srghma/Videos/output-ru/"
+    input_dir = "/home/srghma/Videos/reason-is-fun/"
+    output_dir = "/home/srghma/Videos/reason-is-fun-json/"
 
     os.makedirs(output_dir, exist_ok=True)
 
     # Get list of video files
-    video_files = [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith(('.mp4', '.webm', '.mkv'))]
+    video_files = [
+        os.path.join(input_dir, f)
+        for f in os.listdir(input_dir)
+        if f.endswith((".mp4", ".webm", ".mkv"))
+    ]
     # video_files = ["/home/srghma/Videos/russians-torture/IMG_1651.MP4"]
 
     for video_path in video_files:
         result = SoniTr.multilingual_media_conversion(
             media_file=video_path,
             min_speakers=1,
-            max_speakers=2,
+            max_speakers=3,
             origin_language="English (en)",
             # target_language="Ukrainian (uk)",
-            target_language="Russian (ru)",
+            # target_language="Russian (ru)",
             # target_language="Khmer (km)",
             # target_language="English (en)",
             # tts_voice00="km-KH-SreypichNeural-Female",
-            tts_voice00="ru_RU-denis-medium VITS-onnx",
-            tts_voice00="ru_speaker_0-Male BARK",
+            # tts_voice00="ru_RU-denis-medium VITS-onnx",
+            # tts_voice00="ru_speaker_0-Male BARK",
             # tts_voice00="uk-UA-OstapNeural-Male", # Azure
             # tts_voice01="uk_UA-ukrainian_tts-medium VITS-onnx",
             # volume_original_audio=0.95,
             diarization_model="pyannote_3.1",
             voice_imitation=True,
             is_gui=False,
-            progress=None
+            progress=None,
+            get_translated_text=True,    # ✅ this makes it return JSON
+            output_type="subtitle",      # just to avoid TTS/video mixing
         )
 
         print(f"Translation complete. Output saved to: {result}")
